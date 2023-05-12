@@ -37,15 +37,40 @@ will just use 4 procces one for each pid. We will also get the daily OC which
 include RME and parts.
 
 """
-
 import simpy
 import numpy as np
 
+def factory_run(env, repairers, spares):
+    global cost
+    
+    cost = 0.0
+    
+    for i in range(4):
+        env.process(operate_machine(env, repairers, spares))
+        
+    while True:
+        cost += 3.75*10*repairers.capactiy + 30*spares.capactiy
+        yield env.timeout(10.0)
+        
+def operate_machine(env, repairers, spares):
+    global cost
+    
+    while True:
+        
+ pass
+    
+    
 np.random.seed(0)
 
 env = simpy.Enviroment()
 
-env.run(until=8*5)
+repairers = simpy.Resource(env, capacity=3)
+
+spares = simpy.Container(env, init=20, capacity=20)
+
+env.process(factory_run(env, repairers, spares))
+
+env.run(until=10*4)
 
 
 
